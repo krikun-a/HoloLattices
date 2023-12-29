@@ -4,6 +4,18 @@ authors:
   - family-names: Balm
     given-names: Floris
     orcid: https://orcid.org/0000-0001-9387-3203
+  - family-names: Krikun
+    given-names: Alexander
+    orcid: https://orcid.org/0000-0001-8789-8703
+  - family-names: Romero-Bermudez
+    given-names: Aurelio
+    orcid: https://orcid.org/0000-0002-2552-368X
+  - family-names: Josko
+    given-names: De Boer
+    orcid: https://orcid.org/0000-0001-6306-1087
+   - family-names: Nicolas
+    given-names: Chagnet
+    orcid: https://orcid.org/0000-0002-4614-0821
 title: HoloLattices: Python codes for Holographic Lattices
-version: v0.1.0
-date-released: 2022-11-04
+version: v?.?.?
+date-released: 2024-??-??
