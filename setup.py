@@ -8,7 +8,7 @@ setup(
         author="Floris Balm",
         author_email="balm@lorentz.leidenuniv.nl",
         package_dir={"":"."},
-        packages=setuptools.find_packages(".", exclude=["build", "Manual", "tutorial"]),
+        packages=setuptools.find_packages(".", exclude=["build", "manual", "tutorial"]),
         install_requires=['pathos' ,'dill', 'h5py', 'numpy','scipy', 'pyFFTW', 'pyyaml'],
         licence="GPLv3"
         )

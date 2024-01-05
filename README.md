@@ -13,5 +13,12 @@ This code has successfully been used for publication purposes, such as for the p
 # Tutorial
 There are a set of tutorial codes available
 
+# For developers
+The repository includes Jupyter notebook. In order to track it correctly, make sure to include the local .gitconfig into your Git configuration with 
+
+    git config --local include.path ../.gitconfig
+
+See https://stackoverflow.com/questions/18329621/how-to-store-a-git-config-as-part-of-the-repository and https://git-scm.com/docs/git-config#_includes
+
 
 

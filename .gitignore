@@ -44,8 +44,6 @@ __pycache__/
 
 # Weird mac files or something? Also useless.
 .nfs*
-## Jupyter Notebook files are hard for git
-##*.ipynb 
 # No .vscode metadata
 .vscode/*
 .vscode 
