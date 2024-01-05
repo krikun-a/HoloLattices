@@ -1,0 +1,7 @@
+Metadata-Version: 2.1
+Name: HolographicLattices
+Version: 0.1
+Summary: Evaluate nonlinear elliptic PDEs using NR
+Author: Floris Balm
+Author-email: balm@lorentz.leidenuniv.nl
+License: GPLv3

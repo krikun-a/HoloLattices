@@ -1,0 +1,7 @@
+README.md
+setup.py
+source/HolographicLattices.egg-info/PKG-INFO
+source/HolographicLattices.egg-info/SOURCES.txt
+source/HolographicLattices.egg-info/dependency_links.txt
+source/HolographicLattices.egg-info/requires.txt
+source/HolographicLattices.egg-info/top_level.txt
