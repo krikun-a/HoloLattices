@@ -1,3 +1,16 @@
+# Preparing for public release
+The purpose of this fork is to prepare the HoloLattices package for public release, in order for it to be available for community for future holographic projects. 
+
+The work is in progress. The main additions will be:
+
+- Interactive Jupyter Notebook based examples in the tutorial section
+- Interfaces with Mathematica and tutorial on how to export the equations of motion
+- Extra module with non-epriodic boundary conditions
+- Complete write up of the manuscipt (now Manual) describing the package, to be published along with the package itself
+- PyPI integration
+
+Stay tuned!
+
 # HoloLattices
 A generic code design for  to solve the problems typically arising in applications of holography to condensed matter systems. It consists of
 a set of initialization blocks, which include importing the form of equations from Mathematica (or elsewhere), setting up the grid and choosing the initial solution
