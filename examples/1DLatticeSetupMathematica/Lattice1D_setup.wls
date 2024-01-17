@@ -27,10 +27,11 @@
 
 (* ::Input:: *)
 (*SetDirectory[NotebookDirectory[]];*)
-(*<<"EDCRGTCcode.m";*)
+(*<<"EDCRGTCcode.m"*)
 (*Off[General::partw];*)
 (*Off[General::partd];*)
 (*Off[General::pspec];*)
+(*On[Assert];*)
 
 
 (* ::Input:: *)
@@ -46,7 +47,11 @@
 
 
 (* ::Subsection:: *)
-(*Define coordinates, tetrad and interval*)
+(*Geometry setup*)
+
+
+(* ::Subsubsection:: *)
+(*Define coordinates, interval and metric*)
 
 
 (* ::Input:: *)
@@ -57,6 +62,10 @@
 
 (* ::Input:: *)
 (*$Assumptions=g0[z]>0&&f[z]>0&&P[z]>0&&Qtt[x,z]>0&&Qzz[x,z]>0&&Q[x,z]>0&&Qxz[x,z]>0&&M[x,z]>0&&Qty[x,z]>0&&R0[x,z]>0*)
+
+
+(* ::Text:: *)
+(*The metric ansatz is a reduced version of 1512.06861.*)
 
 
 (* ::Input:: *)
@@ -76,65 +85,62 @@
 (*g//MatrixForm*)
 
 
+(* ::Text:: *)
+(*The reference metric for the DeTurck trick*)
+
+
 (* ::Input:: *)
-(*gRef=g/.{Qtt->(1&),Qzz->(1&),Q->(1&),M->(1&),Qxz->(0&),Qyz->(0&),Qty->(0&),Qtx->(0&),Qtz->(0&),R0->(0&)}*)
-(**)
+(*gRef=g/.{Qtt->(1&),Qzz->(1&),Q->(1&),M->(1&),Qxz->(0&)};*)
 
 
-(* ::Subsection:: *)
+(* ::Subsubsection:: *)
 (*Define a frame*)
 
 
 (* ::Text:: *)
-(*coframe has indices coframe[[a,mu]]=e^a_\mu*)
-(*frame has indices frame[[a,mu]]=e_a^mu*)
-
-
-(* ::Input::Initialization:: *)
-\[Eta]={{-((f[z]Qtt[x,z])/g0[z]^2),0,0,0},{0,Q[x,z]/g0[z]^2 M[x,z],0,0},{0,0,Q[x,z]/g0[z]^2 M[x,z]^-1,0},{0,0,0,(g0'[z]^2 Qzz[x,z])/(f[z]g0[z]^2)}};
+(*Coframe has the indices coframe[[a,mu]]=e^a_\mu*)
+(*Frame has indices frame[[a,mu]]=e_a^mu*)
 
 
 (* ::Input:: *)
-(*coframe={{1, 0 Lx Qtx[x,z], 0 Ly Qty[x,z],0 Qtz[x,z]},{0,Lx,0,Qxz[x,z]},{0,0,Ly, 0Qyz[x,z]},{0,0,0,1}};*)
+(*\[Eta]={{-((f[z]Qtt[x,z])/g0[z]^2),0,0,0},{0,Q[x,z]/g0[z]^2 M[x,z],0,0},{0,0,Q[x,z]/g0[z]^2 M[x,z]^-1,0},{0,0,0,(g0'[z]^2 Qzz[x,z])/(f[z]g0[z]^2)}};*)
+
+
+(* ::Input:: *)
+(*coframe={{1,0, 0,0},{0,Lx,0,Qxz[x,z]},{0,0,Ly, 0},{0,0,0,1}};*)
 (*frame=Transpose[Inverse[coframe]];*)
 (*gMUU = Transpose[frame] . \[Eta] . frame;*)
 (*gMdd=Transpose[coframe] . \[Eta] . coframe;*)
-(*MatrixForm[%]//Simplify//PowerExpand*)
+
+
+(* ::Text:: *)
+(*Check that the product of tetrads equals the metric*)
 
 
 (* ::Input:: *)
-(*g-gMdd//Simplify*)
+(*Assert[Simplify[Total[Flatten[g-gMdd]^2]]==0]*)
 
 
-(* ::Subsection:: *)
-(*Definer reference metric in the frame*)
+(* ::Subsubsection:: *)
+(*Define the reference metric in the frame*)
 
 
 (* ::Input:: *)
 (*\[Eta]Ref=frame . gRef . Transpose[frame];*)
 (*gMddRef=Transpose[coframe] . \[Eta]Ref . coframe;*)
-(*MatrixForm[%]//Simplify//PowerExpand*)
 
 
 (* ::Input:: *)
 (*\[Eta]Ref//MatrixForm//Simplify*)
 
 
-(* ::Subsection:: *)
+(* ::Subsubsection:: *)
 (*Compute Christoffel for reference metric*)
 
 
 (* ::Input:: *)
-(*Variables[\[Eta]]*)
-
-
-(* ::Input:: *)
-(*Clear$dx*)
-(*eIN=coframe . dCoord//Simplify*)
-
-
-(* ::Input:: *)
-(*Variables[eIN]*)
+(*Clear$dx;*)
+(*eIN=coframe . dCoord//Simplify;*)
 
 
 (* ::Input:: *)
@@ -142,22 +148,13 @@
 (*GUddRef=GUdd;*)
 
 
-(* ::Input:: *)
-(*SetDirectory[NotebookDirectory[]<>"Data/"]*)
-
-
-(* ::Input:: *)
-(*GUddRef>>"GUddRef_Lattice1D_tetrad_Donos.dat";*)
-(**)
-
-
-(* ::Subsection:: *)
-(*RG computation*)
+(* ::Subsubsection:: *)
+(*Compute Christoffel for the ansatz metric*)
 
 
 (* ::Input:: *)
 (*Clear$dx*)
-(*eIN=coframe . dCoord//Simplify*)
+(*eIN=coframe . dCoord//Simplify;*)
 
 
 (* ::Input:: *)
@@ -165,21 +162,8 @@
 (**)
 
 
-(* ::Input:: *)
-(**)
-
-
-(* ::Input:: *)
-(*SetDirectory[NotebookDirectory[]];*)
-(*{gUU,GUdd,gdd,Rdd}>>"Data/Grav_data_1D_lattice_tetrad_Donos.dat";*)
-
-
-(* ::Subsection:: *)
+(* ::Subsubsection:: *)
 (*Define DeTurck vector*)
-
-
-(* ::Input:: *)
-(**)
 
 
 (* ::Input:: *)
@@ -189,34 +173,18 @@
 
 (* ::Input:: *)
 (*\[Xi]Norm=\[Xi]d . \[Xi]U//Refine;*)
-(**)
 
 
 (* ::Input:: *)
 (*divXi = (1/2 (Transpose[#]+#)&)@covD[\[Xi]d];*)
-(**)
 
 
 (* ::Subsection:: *)
-(*Definitions of fields and potential*)
+(*Equations of motion*)
 
 
-(* ::Input:: *)
-(*?Sech*)
-
-
-(* ::Input:: *)
-(*\[Tau]=(Sech[Sqrt[3]#]&);*)
-(*V=(-6 Cosh[Sqrt[1/3]#]&);*)
-(*W=(V[#]+6&);*)
-(*\[Kappa]=1/2;*)
-(*\[Theta]=(c1/(6Sqrt[2]) Tanh[Sqrt[3]#]&);*)
-(*Clear[\[Tau],V,W,\[Kappa],\[Theta]]*)
-(**)
-
-
-(* ::Input:: *)
-(**)
+(* ::Subsubsection:: *)
+(*Definitions of fields and potentials*)
 
 
 (* ::Input:: *)
@@ -229,12 +197,10 @@
 
 (* ::Input:: *)
 (*Fdd=(Transpose[#]-#&)@ covD[Ad];*)
-(**)
 
 
-(* ::Input:: *)
-(*Fdd//Simplify//MatrixForm*)
-(**)
+(* ::Text:: *)
+(*Gauge fixing term for the Maxwell field*)
 
 
 (* ::Input:: *)
@@ -242,28 +208,15 @@
 (*dPsiA=covD[PsiA];*)
 
 
-(* ::Input:: *)
-(*Coefficient[EOMAH[[4]],Derivative[0,0,2][az][x,y,z]]*)
-
-
-(* ::Subsection:: *)
-(*Equations of motion*)
+(* ::Subsubsection:: *)
+(*Einstein equation*)
 
 
 (* ::Input:: *)
 (*Gdd=Rdd+3gdd  - 1/2 (multiDot[Fdd,Raise[Fdd,2],{2,2}] - gdd/4 multiDot[Fdd,Raise[Fdd,{1,2}],{1,1},{2,2}])//Refine;*)
 
 
-(* ::Input:: *)
-(*EOMA=covDiv[Raise[Fdd,1],{1}]//Refine;*)
-
-
-(* ::Input:: *)
-(*SetDirectory[NotebookDirectory[]]*)
-(*{Gdd,EOMA}>>"Data/Lattice_1D_raw_EOMs_tetrad_Donos.dat";*)
-
-
-(* ::Subsection:: *)
+(* ::Text:: *)
 (*DeTurck equation*)
 
 
@@ -271,20 +224,28 @@
 (*GHdd = Gdd - divXi//Refine;*)
 
 
+(* ::Subsubsection:: *)
+(*Maxwell equation*)
+
+
 (* ::Input:: *)
-(*EOMAH=EOMA+1dPsiA//Refine;*)
+(*EOMA=covDiv[Raise[Fdd,1],{1}]//Refine;*)
+
+
+(* ::Text:: *)
+(*Gauge fixed Maxwell equation*)
+
+
+(* ::Input:: *)
+(*EOMAH=EOMA+dPsiA//Refine;*)
 
 
 (* ::Input:: *)
 (*SetDirectory[NotebookDirectory[]]*)
-(*{GHdd,EOMAH,divXi,dPsiA}>>"Data/Lattice_1D_gauge_EOMs_tetrad_Donos.dat";*)
+(*{GHdd,EOMAH,divXi,dPsiA}>>"IntermediateData/Lattice_1D_gauge_EOMs.dat";*)
 
 
-(* ::Input:: *)
-(*dPsiA[[1]]*)
-
-
-(* ::Subsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Check the nonzero entries in the equations*)
 
 
@@ -298,7 +259,10 @@
 
 (* ::Input:: *)
 (*Map[If[!NumberQ[#],1,0]&,\[Xi]d,{1}]//MatrixForm*)
-(**)
+
+
+(* ::Subsubsection:: *)
+(*Define the control expressions*)
 
 
 (* ::Input:: *)
@@ -306,12 +270,8 @@
 
 
 (* ::Input:: *)
-(**)
-
-
-(* ::Input:: *)
 (*SetDirectory[NotebookDirectory[]]*)
-(*{\[Xi]Norm,trG}>>"Data/XiNorm_TrG_1D_lattice_tetrad_Donos.dat";*)
+(*{\[Xi]Norm,trG}>>"IntermediateData/XiNorm_TrG.dat";*)
 
 
 (* ::Subsection:: *)
@@ -322,57 +282,49 @@
 (*Variables[GHdd]*)
 
 
-(* ::Input::Initialization:: *)
-Bmodes={at[x,z],Qtt[x,z],M[x,z],Q[x,z],Qzz[x,z],Qxz[x,z]};
+(* ::Text:: *)
+(*List and count the ansatz functions we are solving for*)
 
 
 (* ::Input:: *)
-(*Length[Bmodes]*)
-
-
-(* ::Input::Initialization:: *)
-DBmodes=Flatten[Through[{D[#,x]&,D[#,z]&,D[#,x,x]&,D[#,z,z]&,D[#,x,z]&}[Bmodes]]];
+(*Bmodes={at[x,z],Qtt[x,z],M[x,z],Q[x,z],Qzz[x,z],Qxz[x,z]};*)
+(*ne=Length[Bmodes]*)
 
 
 (* ::Input:: *)
-(*DBmodes[[6*3+1;;6*4]]*)
+(*DBmodes=Flatten[Through[{D[#,x]&,D[#,z]&,D[#,x,x]&,D[#,z,z]&,D[#,x,z]&}[Bmodes]]];*)
+
+
+(* ::Text:: *)
+(*Diagonalize the equations*)
 
 
 (* ::Input:: *)
 (*BeqsRaw={EOMAH[[1]],GHdd[[1,1]],GHdd[[2,2]]-M[x,z]^2 GHdd[[3,3]],1/2 (GHdd[[2,2]]+M[x,z]^2 GHdd[[3,3]]),GHdd[[4,4]],1/M[x,z] GHdd[[4,2]]};*)
-
-
-(* ::Input:: *)
 (*Transpose[Coefficient[BeqsRaw,#]&/@DBmodes[[6*3+1;;6*4]]]//Simplify//MatrixForm*)
-(**)
+
+
+(* ::Text:: *)
+(*Normalize the leading derivative terms*)
 
 
 (* ::Input:: *)
-(*BeqsSimplified=ConstantArray[0,6]*)
-
-
-(* ::Input:: *)
-(*Table[time=Timing[BeqsSimplified[[j]]=Collect[BeqsRaw[[j]]/Coefficient[BeqsRaw[[j]],DBmodes[[6*3+j]]],Join[DBmodes,{Bmodes[[j]]}],(Simplify[#,TimeConstraint->{30,30}]&)];*)
-(*];*)
-(*Print["j="<>ToString[j]<>" t="<>ToString[time[[1]]]];*)
-(*,{j,1,6}]*)
+(*BeqsSimplified=ConstantArray[0,ne];*)
+(*Table[BeqsSimplified[[j]]=Collect[BeqsRaw[[j]]/Coefficient[BeqsRaw[[j]],DBmodes[[ne*3+j]]],Join[DBmodes,{Bmodes[[j]]}],(Simplify[#,TimeConstraint->{30,30}]&)];*)
+(*,{j,1,ne}];*)
 
 
 (* ::Input:: *)
 (*SetDirectory[NotebookDirectory[]]*)
-(*BeqsSimplified>>"Data/Lattice1D_EOMs_simplified_tetrad_Donos.dat";*)
+(*BeqsSimplified>>"IntermediateData/Lattice1D_EOMs_normalized.dat"*)
+
+
+(* ::Subsection:: *)
+(*Rename the functions to solve for*)
 
 
 (* ::Input:: *)
-(*DBmodes[[8*4+1;;8*5]]*)
-
-
-(* ::Input:: *)
-(*Transpose[Coefficient[BeqsSimplified,#]&/@DBmodes[[15*3+1;;15*4]]]//Simplify//MatrixForm*)
-
-
-(* ::Input::Initialization:: *)
-SubF={at->( F[1][#1,#2]&),Qtt->F[2],M->F[3],Q->F[4],Qzz->F[5],Qxz->F[6]};
+(*SubF={at->( F[1][#1,#2]&),Qtt->F[2],M->F[3],Q->F[4],Qzz->F[5],Qxz->F[6]};*)
 
 
 (* ::Subsection:: *)
@@ -383,32 +335,21 @@ SubF={at->( F[1][#1,#2]&),Qtt->F[2],M->F[3],Q->F[4],Qzz->F[5],Qxz->F[6]};
 (*c.f. Donos 1512.06861 (5.2)*)
 
 
-(* ::Input::Initialization:: *)
-SubFxz=F[i_]:>Fxz[[i]];
-
-SubPotentials=MapThread[(#1->#2&),{{f,g0},{((1-#)^2 (1+(1-(1-#)^2)+(1-(1-#)^2)^2- (\[Mu]1^2 (1-(1-#)^2)^3)/4)&),(1-(1-#)^2&)}}];
-
-
 (* ::Input:: *)
-(*1/4 (\[Mu]1^2 (r-2)^3 r^3+4 (1+2r+3 r^2-4 r^3+r^4))-(1+(1-(1-r)^2)+(1-(1-r)^2)^2- (\[Mu]1^2 (1-(1-r)^2)^3)/4)//Simplify*)
+(*SubFxz=F[i_]:>Fxz[[i]];*)
+(*SubPotentials=MapThread[(#1->#2&),{{f,g0},{((1-#)^2 (1+(1-(1-#)^2)+(1-(1-#)^2)^2- (\[Mu]1^2 (1-(1-#)^2)^3)/4)&),(1-(1-#)^2&)}}];*)
 
 
-(* ::Input:: *)
-(**)
-
-
-(* ::Input:: *)
-(*BeqsSimplified[[6]]/.SubF/.SubFxz/.SubPotentials//PowerExpand;*)
-(*Variables[%]*)
+(* ::Subsection:: *)
+(*Internal equations and derivatives*)
 
 
 (* ::Input:: *)
 (*EOMsI=BeqsSimplified/.SubF/.SubFxz;*)
 
 
-(* ::Input::Initialization:: *)
-SubLinx=Fxz[[i_]]:>(Fxz[[i]][#1,#2]+lin dFxz[[i]][#1,#2]&);
-
+(* ::Input:: *)
+(*SubLinx=Fxz[[i_]]:>(Fxz[[i]][#1,#2]+lin dFxz[[i]][#1,#2]&);*)
 
 
 (* ::Input:: *)
@@ -417,60 +358,62 @@ SubLinx=Fxz[[i_]]:>(Fxz[[i]][#1,#2]+lin dFxz[[i]][#1,#2]&);
 
 (* ::Input:: *)
 (*SetDirectory[NotebookDirectory[]]*)
-(*EOMsI>>"Data/EOMsI_lattice_1D_tetrad_Donos.dat";*)
+(*EOMsI>>"IntermediateData/EOMsI.dat";*)
 
 
 (* ::Input:: *)
-(*DumpSave["Data/dEOMsI_lattice_1D_tetrad_Donos.m",dEOMsI];*)
-
-
-(* ::Input:: *)
-(*Coefficient[EOMsI[[1]],Derivative[0,2][Fxz[[1]]][x,z]]*)
+(*DumpSave["IntermediateData/dEOMsI.m",dEOMsI];*)
 
 
 (* ::Subsection:: *)
 (*Boundary BC*)
 
 
-(* ::Input:: *)
-(*Bmodes*)
+SubF
+
+
+(* ::Text:: *)
+(*Unity for all the metric fields except off-diagonal Qxz. This sets asymptotic AdS.*)
 
 
 (* ::Input:: *)
-(*EOMsB=Table[Fxz[[i]][x,z]-If[i>=2&&i<=5,1,0],{i,1,6}];*)
+(*EOMsB=Table[Fxz[[i]][x,z]-If[i>=2&&i<=5,1,0],{i,1,ne}];*)
+
+
+(* ::Text:: *)
+(*Here we define the shape of the boundary lattice*)
+
+
+(* ::Input:: *)
 (*EOMsB[[1]]-=(1 +Ax Cos[NperiodsX 2 Pi x+Pi phaseX]);*)
-(*EOMsB;*)
 
 
 (* ::Input:: *)
 (*dEOMsB=(D[EOMsB/.SubLinx,lin])/.{lin->0};*)
 
 
-(* ::Input:: *)
-(*EOMsB*)
-
-
 (* ::Subsection:: *)
 (*Horizon BC*)
 
 
-(* ::Input:: *)
-(*Bmodes*)
-
-
-(* ::Input:: *)
-(*Bmodes[[5]]*)
+(* ::Text:: *)
+(*For the rescaled radial coordinate all derivatives are zero on the horizon*)
 
 
 (* ::Input:: *)
 (*EOMsT=Table[Derivative[0,1][Fxz[[i]]][x,z],{i,1,6}];*)
+
+
+(* ::Text:: *)
+(*Thermal equilibrium requires Q_tt = Q_zz*)
+
+
+(* ::Input:: *)
 (*EOMsT[[5]]=Fxz[[5]][x,z]-Fxz[[2]][x,z];*)
-(*EOMsT*)
 
 
 (* ::Input:: *)
 (*dEOMsT=(D[EOMsT/.SubLinx,lin])/.{lin->0};*)
-(**)
 
 
 (* ::Subsection:: *)
@@ -479,8 +422,7 @@ SubLinx=Fxz[[i_]]:>(Fxz[[i]][#1,#2]+lin dFxz[[i]][#1,#2]&);
 
 (* ::Input:: *)
 (*orderDiv={{0,0},{1,0},{0,1},{2,0},{0,2},{1,1}};*)
-(*Length[orderDiv]*)
-(*ne=6;*)
+(*ndiv=Length[orderDiv]*)
 
 
 (* ::Input:: *)
@@ -509,7 +451,7 @@ SubLinx=Fxz[[i_]]:>(Fxz[[i]][#1,#2]+lin dFxz[[i]][#1,#2]&);
 
 (* ::Input:: *)
 (*dEOMsI;*)
-(*Map[Coefficient[#,Flatten[Array[Derivative[orderDiv[[#1,1]],orderDiv[[#1,2]]][dFxz[[#2]]][x,z]&,{6,ne}]]]&,%];*)
+(*Map[Coefficient[#,Flatten[Array[Derivative[orderDiv[[#1,1]],orderDiv[[#1,2]]][dFxz[[#2]]][x,z]&,{ndiv,ne}]]]&,%];*)
 (*CoefEOMsI=zeroI+Simplify[%,TimeConstraint->10] /. SubFI/.SubPotentials;*)
 
 
@@ -520,7 +462,7 @@ SubLinx=Fxz[[i_]]:>(Fxz[[i]][#1,#2]+lin dFxz[[i]][#1,#2]&);
 
 (* ::Input:: *)
 (*dEOMsT;*)
-(*Map[Coefficient[#,Flatten[Array[Derivative[orderDiv[[#1,1]],orderDiv[[#1,2]]][dFxz[[#2]]][x,z]&,{6,ne}]]]&,%];*)
+(*Map[Coefficient[#,Flatten[Array[Derivative[orderDiv[[#1,1]],orderDiv[[#1,2]]][dFxz[[#2]]][x,z]&,{ndiv,ne}]]]&,%];*)
 (*CoefEOMsT=zeroT+Simplify[%,TimeConstraint->10] /. SubFT/.SubPotentials;*)
 
 
@@ -531,7 +473,7 @@ SubLinx=Fxz[[i_]]:>(Fxz[[i]][#1,#2]+lin dFxz[[i]][#1,#2]&);
 
 (* ::Input:: *)
 (*dEOMsB;*)
-(*Map[Coefficient[#,Flatten[Array[Derivative[orderDiv[[#1,1]],orderDiv[[#1,2]]][dFxz[[#2]]][x,z]&,{6,ne}]]]&,%];*)
+(*Map[Coefficient[#,Flatten[Array[Derivative[orderDiv[[#1,1]],orderDiv[[#1,2]]][dFxz[[#2]]][x,z]&,{ndiv,ne}]]]&,%];*)
 (*CoefEOMsB=zeroB+Simplify[%,TimeConstraint->10] /. SubFB/.SubPotentials;*)
 (*EOMsB/.SubFB/.SubPotentials;*)
 (*gEOMsB=%;*)
@@ -543,18 +485,8 @@ SubLinx=Fxz[[i_]]:>(Fxz[[i]][#1,#2]+lin dFxz[[i]][#1,#2]&);
 
 (* ::Input:: *)
 (*SetDirectory[NotebookDirectory[]];*)
-(*CoefEOMsI>>"Data/CoefEOMsI_1D_no_potentials_tetrad_Donos.dat";*)
-
-
-(* ::Input:: *)
-(*SetDirectory[NotebookDirectory[]];*)
-(*<<"!rm EquationCoefficients_back_lattice_1D.m"*)
-(*Save["EquationCoefficients_back_lattice_1D.m",{ne,orderDiv,gEOMsB,gEOMsI,gEOMsT,CoefEOMsB,CoefEOMsI,CoefEOMsT}]*)
-(**)
-
-
-(* ::Input:: *)
-(*Variables[{gEOMsI,gEOMsB}]*)
+(*<<"!rm IntermediateData/EquationCoefficients_back_lattice_1D.m"*)
+(*Save["IntermediateData/EquationCoefficients_back_lattice_1D.m",{ne,orderDiv,gEOMsB,gEOMsI,gEOMsT,CoefEOMsB,CoefEOMsI,CoefEOMsT}]*)
 
 
 (* ::Subsection:: *)
@@ -563,7 +495,7 @@ SubLinx=Fxz[[i_]]:>(Fxz[[i]][#1,#2]+lin dFxz[[i]][#1,#2]&);
 
 (* ::Input:: *)
 (*SetDirectory[NotebookDirectory[]]*)
-(*{\[Xi]Norm,trG}=<<"Data/XiNorm_TrG_1D_lattice_tetrad_Donos.dat";*)
+(*{\[Xi]Norm,trG}=<<"IntermediateData/XiNorm_TrG.dat";*)
 
 
 (* ::Input:: *)
@@ -613,11 +545,5 @@ SubLinx=Fxz[[i_]]:>(Fxz[[i]][#1,#2]+lin dFxz[[i]][#1,#2]&);
 
 (* ::Input:: *)
 (*SetDirectory[NotebookDirectory[]]*)
-(*<<"!rm ControlExpressions_back_lattice_1D_dump.m";*)
-(*DumpSave["ControlExpressions_back_lattice_1D_dump.m",{gNormXiI,gNormXiT,gNormXiB,gtrGI,gtrGT,gtrGB}];*)
-
-
-(* ::Input:: *)
-(*SetDirectory[NotebookDirectory[]]*)
-(*<<"!rm ControlExpressions_back_lattice_1D.m";*)
-(*Save["ControlExpressions_back_lattice_1D.m",{gNormXiI,gNormXiT,gNormXiB,gtrGI,gtrGT,gtrGB}];*)
+(*<<"!rm IntermediateData/ControlExpressions_back_lattice_1D_dump.m";*)
+(*DumpSave["IntermediateData/ControlExpressions_back_lattice_1D_dump.m",{gNormXiI,gNormXiT,gNormXiB,gtrGI,gtrGT,gtrGB}];*)

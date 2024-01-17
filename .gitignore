@@ -24,6 +24,7 @@ Manual/*.out
 *.swo
 
 # No local data
+examples/1DLatticeSetupMathematica/IntermediateData/*
 data/*
 data/
 !tutorial/SeriesExample/data/RN_Converged_L1_T0.1.h5
