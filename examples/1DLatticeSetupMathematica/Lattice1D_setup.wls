@@ -131,7 +131,7 @@
 
 
 (* ::Input:: *)
-(*\[Eta]Ref//MatrixForm//Simplify*)
+(*\[Eta]Ref//MatrixForm//Simplify;*)
 
 
 (* ::Subsubsection:: *)
@@ -245,7 +245,7 @@
 (*{GHdd,EOMAH,divXi,dPsiA}>>"IntermediateData/Lattice_1D_gauge_EOMs.dat";*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Check the nonzero entries in the equations*)
 
 

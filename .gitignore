@@ -43,6 +43,9 @@ __pycache__/*
 __pycache__/
 **/__pycache__/
 
+# No Mathematica Notebooks
+*.nb
+
 # Weird mac files or something? Also useless.
 .nfs*
 # No .vscode metadata
