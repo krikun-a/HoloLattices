@@ -7,7 +7,7 @@ It then tries
 import dataclasses
 import logging
 from dataclasses import dataclass, field
-from typing import List, Dict, Union, Callable,Any
+from typing import List, Dict, Union, Callable, Any
 
 import numpy as np
 import yaml
@@ -100,45 +100,47 @@ class EquationOptions(OptionsBase):
     num_fields: int = 1
     num_eqs_of_motion: int = 1
     max_deriv: int = 2
-    diff_order: int = 4
-
-    grid_sizes: List[int] = field(default_factory=lambda: [10])
-    grid_domains: List[float] = field(default_factory=lambda: [1.0])
-    grid_spacings: List[str] = field(default_factory=lambda: ["unif"])
-
-    grid_periodic: List[bool] = field(default_factory=lambda: [True])
-    eom_derivative_methods: List[str] = field(default_factory=lambda: ["fdd"])
-
     field: str = dataclasses.field(default_factory=lambda: "f")
     coordinates: List[str] = dataclasses.field(default_factory=lambda: ["x"])
     field_dtype : Union[str,Any] = dataclasses.field(default_factory=lambda: "float")
-
+    
     def __post_init__(self): # Verification and initialisation
-        for spacing, method, periodicity in zip(self.grid_spacings, self.eom_derivative_methods, self.grid_periodic):
-            # These test for all the valid combination, these are all that I can think of. Some of
-            # the combinations may not be the most logical, but they should still give some indication
-            # of where the problem is.
-            if spacing == "cheb" and (method != "fdd" and method != "chebspectral"):
-                raise ValueError(f"For grid spacing {spacing}, expect methods fdd or chebspectral. Got: {method}")
-            if method == "fft" and spacing != "unif":
-                raise ValueError(f"For fft derivatives, require uniform spacing. Got: {spacing}")
-            if method == "fft" and not periodicity:
-                raise ValueError(f"For fft derivatives, require periodic domain. Got: {periodicity}")
-            if method == "chebspectral" and spacing != "cheb":
-                raise ValueError(f"For chebyshev spectral derivatives, require chebyshev spacing. Got: {spacing}")
-            if method == "cheb" and periodicity:
-                raise ValueError(f"For chebyshev spectral derivatives, require non-periodic domain. Got: {periodicity}")
-
         dtype = self.field_dtype
         if dtype == "float" or dtype == "real" or dtype == "float64":
             self.field_dtype = np.float64
         elif dtype == "float128" or dtype == "longdouble":
             self.field_dtype = np.longdouble
-
         elif dtype == "cpx" or dtype == "complex" or dtype == "complex128" or dtype=="complex128":
             self.field_dtype = np.complex128
         else:
-            raise ValueError(f"Wrong option for {self.__name__}")
+            raise ValueError(f"Wrong field_dtype option for {self.__name__}")
+
+@dataclass
+class GridOptions(OptionsBase):
+    grid_sizes: List[int] = field(default_factory=lambda: [10])
+    grid_domains: List[float] = field(default_factory=lambda: [1.0])
+    grid_spacings: List[str] = field(default_factory=lambda: ["unif"])
+    diff_order: int = 4
+    grid_periodic: List[bool] = field(default_factory=lambda: [True])
+
+    # This block checks for compatibility of Grid options with Nonlinear equations options. Need to move it somewhere to the higher level
+    # def __post_init__(self): # Verification and initialisation
+    #     for spacing, method, periodicity in zip(self.grid_spacings, self.eom_derivative_methods, self.grid_periodic):
+    #         # These test for all the valid combination, these are all that I can think of. Some of
+    #         # the combinations may not be the most logical, but they should still give some indication
+    #         # of where the problem is.
+    #         if spacing == "cheb" and (method != "fdd" and method != "chebspectral"):
+    #             raise ValueError(f"For grid spacing {spacing}, expect methods fdd or chebspectral. Got: {method}")
+    #         if method == "fft" and spacing != "unif":
+    #             raise ValueError(f"For fft derivatives, require uniform spacing. Got: {spacing}")
+    #         if method == "fft" and not periodicity:
+    #             raise ValueError(f"For fft derivatives, require periodic domain. Got: {periodicity}")
+    #         if method == "chebspectral" and spacing != "cheb":
+    #             raise ValueError(f"For chebyshev spectral derivatives, require chebyshev spacing. Got: {spacing}")
+    #         if method == "cheb" and periodicity:
+    #             raise ValueError(f"For chebyshev spectral derivatives, require non-periodic domain. Got: {periodicity}")
+
+
 
 @dataclass
 class SolverOptions(OptionsBase):
@@ -146,6 +148,7 @@ class SolverOptions(OptionsBase):
 
 @dataclass
 class NonLinearSolverOptions(SolverOptions):
+    eom_derivative_methods: List[str] = field(default_factory=lambda: ["fdd"])
     nonlinear_update_step: float = 1.0
     max_nonlinear_steps: int = 20
     @classmethod
