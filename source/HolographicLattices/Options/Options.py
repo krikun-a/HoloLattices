@@ -18,7 +18,7 @@ from yaml import SafeLoader as SafeLoader
 class OptionsBase:
 
     """
-    This is where the magic happens. Subclassing this allows it to be trivially read from a file.
+    Subclassing this allows it to be trivially read from a file.
     The way it works is that it looks for the names that are given as data members of the objects,
     and then tries to read those from the input file. It works quite well, and multiple inheritance
     makes it so that you can combine classes in options (see e.g. IOOptions <- (InputOptions | OutputOptions)
@@ -29,7 +29,7 @@ class OptionsBase:
     @classmethod
     def load_from_file(cls, infile: str):
         """
-        This is the bulk method that does all the magic in the loading
+        This is the bulk method that does all the loading
         :param infile:
         :return:
         """
@@ -77,7 +77,7 @@ class OptionsBase:
     @classmethod
     def _class_opt_name(cls):
         """
-        Part of the magic: Subclasses replace cls.__name__ with their own name, making it that they can be easily
+        Subclasses replace cls.__name__ with their own name, making it that they can be easily
         imported. This should be overridden for deeper subclasses than the basic list provided here. These are currently
          - EquationOptions
          - GridOptions
@@ -100,6 +100,8 @@ class EquationOptions(OptionsBase):
     num_fields: int = 1
     num_eqs_of_motion: int = 1
     max_deriv: int = 2
+
+
     field: str = dataclasses.field(default_factory=lambda: "f")
     coordinates: List[str] = dataclasses.field(default_factory=lambda: ["x"])
     field_dtype : Union[str,Any] = dataclasses.field(default_factory=lambda: "float")
@@ -113,17 +115,18 @@ class EquationOptions(OptionsBase):
         elif dtype == "cpx" or dtype == "complex" or dtype == "complex128" or dtype=="complex128":
             self.field_dtype = np.complex128
         else:
-            raise ValueError(f"Wrong field_dtype option for {self.__name__}")
+            raise ValueError(f"Wrong option for {self.__name__}")
 
 @dataclass
 class GridOptions(OptionsBase):
     grid_sizes: List[int] = field(default_factory=lambda: [10])
     grid_domains: List[float] = field(default_factory=lambda: [1.0])
     grid_spacings: List[str] = field(default_factory=lambda: ["unif"])
-    diff_order: int = 4
     grid_periodic: List[bool] = field(default_factory=lambda: [True])
+    diff_order: int = 4
+    
 
-    # This block checks for compatibility of Grid options with Nonlinear equations options. Need to move it somewhere to the higher level
+    #Include it later in the PostInit of the full options.
     # def __post_init__(self): # Verification and initialisation
     #     for spacing, method, periodicity in zip(self.grid_spacings, self.eom_derivative_methods, self.grid_periodic):
     #         # These test for all the valid combination, these are all that I can think of. Some of
@@ -140,8 +143,6 @@ class GridOptions(OptionsBase):
     #         if method == "cheb" and periodicity:
     #             raise ValueError(f"For chebyshev spectral derivatives, require non-periodic domain. Got: {periodicity}")
 
-
-
 @dataclass
 class SolverOptions(OptionsBase):
     tolerance: float = 1e-6
@@ -151,6 +152,8 @@ class NonLinearSolverOptions(SolverOptions):
     eom_derivative_methods: List[str] = field(default_factory=lambda: ["fdd"])
     nonlinear_update_step: float = 1.0
     max_nonlinear_steps: int = 20
+    eom_derivative_methods: List[str] = field(default_factory=lambda: ["fdd"])
+
     @classmethod
     def _class_opt_name(cls):
         return "SolverOptions"
@@ -196,7 +199,7 @@ class IOOptions(InputOptions, OutputOptions):
 
 
 @dataclass
-class ConstantOptions(OptionsBase):
+class FixedConstantOptions(OptionsBase):
     """
     Has two fields: constants and functions. Function are things like sin, cos, pow, exp etc,
     where constants are pi and others, such as
@@ -279,3 +282,9 @@ class ConstantOptions(OptionsBase):
                        " this way due to safety in eval. Use load_from_file_unsafe to get expected behaviour")
         return cls.load_from_file_safe(infile)
 
+@dataclass
+class ConstantOptions(EquationOptions, FixedConstantOptions):
+
+    @classmethod
+    def _class_opt_name(cls):
+        return "ConstantOptions"

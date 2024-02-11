@@ -16,11 +16,11 @@ def load_seed_algebraic(path: Path, constant_options: ConstantOptions, grid_info
 
         grid_shape = grid_information.options.grid_sizes
         grid_volume = np.product(grid_shape)
-        num_fields = grid_information.options.num_fields
+        num_fields = len(lines)
 
         full_grids = [grid.ravel() for grid in np.meshgrid(*grid_information.get_1d_grids(), indexing="ij")]
-        variables = {k:v for k, v in zip(grid_information.options.coordinates, full_grids)}
-        seed_return = np.zeros((num_fields,grid_volume),dtype=grid_information.options.field_dtype)
+        variables = {k:v for k, v in zip(constant_options.coordinates, full_grids)}
+        seed_return = np.zeros((num_fields,grid_volume),dtype=constant_options.field_dtype)
         # Evaluate each term. If it was a constant, assume that it takes that constant value
         # at each of the gridpoints
         for i, line in enumerate(lines):

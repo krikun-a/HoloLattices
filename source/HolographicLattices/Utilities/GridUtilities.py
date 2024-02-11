@@ -164,7 +164,7 @@ def get_boundaries_and_bulk_indices(grid_sizes, periodicity):
 
 @dataclass
 class GridInformation:
-    options: HolographicLattices.Options.Options.EquationOptions
+    options: HolographicLattices.Options.Options.GridOptions
 
     grids: List[np.ndarray] = field(init=False, default_factory=lambda: None)
 
