@@ -1,0 +1,6 @@
+-1 - ax*cos(2*gxb*nperiodsx*pi + phasex*pi) + gfb[0,0]
+-1 + gfb[1,0]
+-1 + gfb[2,0]
+-1 + gfb[3,0]
+-1 + gfb[4,0]
+gfb[5,0]
