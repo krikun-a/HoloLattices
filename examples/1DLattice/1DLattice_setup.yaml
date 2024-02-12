@@ -19,22 +19,26 @@
 #
 
 GridOptions:
-  grid_sizes: [20,40]
-  # the size of each domain in real space.
-  grid_domains:
-    [1.0,1.0]
-  grid_spacings: [unif, unif] # Currently, unif and cheb are technically supported, although cheb has not been tested enough.
-  diff_order: 4
-  grid_periodic: [yes, no]
+
 
 EquationOptions:
   dims: 2 # Number of dimensions to evaluate in 
-  num_fields: 9
-  num_eqs_of_motion: 9
+  num_fields: 6
+  num_eqs_of_motion: 6
   max_deriv: 2 # More than 2 is never supported - this option is here to allow for first-derivative only problems like the first fermions
   coordinates: [x,z]
   field: f # Name of the field that we are solving for in the equations. Usually named f when doing the backgrounds, or psi when doing conductivities
   field_dtype: float64 # can be complex (or some higher-bit type for increased precision at cost of runtime)
+
+  grid_sizes: [20,40]
+  # the size of each domain in real space.
+  grid_domains:
+    [1.0,1.0]
+  eom_derivative_methods: ['fdd', 'fdd']
+  grid_spacings: [unif, unif] # Currently, unif and cheb are technically supported, although cheb has not been tested enough.
+  diff_order: 4
+  grid_periodic: [yes, no]
+
 
 SolverOptions:
   tolerance: 1.0e-8 # Tolerance to set for convergence
@@ -43,7 +47,7 @@ SolverOptions:
   max_nonlinear_steps : 20 
 
 IOOptions:
-  coefficient_folder: "../Equations/" # This is the directory that all the *txt files are in
+  coefficient_folder: "./Equations/" # This is the directory that all the *txt files are in
   # If set to yes/true/..., it tries to evaluate the file as a functions (e.g. can set explicit background ansatz in functional form).
   # If set to no/false/..., it tries to read an hdf5 file with the fields as an array
   seed_algebraic: yes 
@@ -53,7 +57,7 @@ IOOptions:
 
   # If you set this, it'll try to load the constants that are given in the seed (if there are any). If any constants are required that are not defined this way, the program will fail"
   use_constants_from_seed: no
-  output_file: "./Data/Reissner_Nordstrom_Solution.h5"
+  output_file: "./Data/1DLattice_Solution.h5"
 
   #Pretty straightforward, here you set the constants
 ConstantOptions:

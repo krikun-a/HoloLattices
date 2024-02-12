@@ -286,13 +286,13 @@
 (*List and count the ansatz functions we are solving for*)
 
 
-(* ::Input:: *)
-(*Bmodes={at[x,z],Qtt[x,z],M[x,z],Q[x,z],Qzz[x,z],Qxz[x,z]};*)
-(*ne=Length[Bmodes]*)
+(* ::Input::Initialization:: *)
+Bmodes={at[x,z],Qtt[x,z],M[x,z],Q[x,z],Qzz[x,z],Qxz[x,z]};
+ne=Length[Bmodes]
 
 
-(* ::Input:: *)
-(*DBmodes=Flatten[Through[{D[#,x]&,D[#,z]&,D[#,x,x]&,D[#,z,z]&,D[#,x,z]&}[Bmodes]]];*)
+(* ::Input::Initialization:: *)
+DBmodes=Flatten[Through[{D[#,x]&,D[#,z]&,D[#,x,x]&,D[#,z,z]&,D[#,x,z]&}[Bmodes]]];
 
 
 (* ::Text:: *)
@@ -319,12 +319,16 @@
 (*BeqsSimplified>>"IntermediateData/Lattice1D_EOMs_normalized.dat"*)
 
 
+SetDirectory[NotebookDirectory[]];
+BeqsSimplified=<<"IntermediateData/Lattice1D_EOMs_normalized.dat";
+
+
 (* ::Subsection:: *)
 (*Rename the functions to solve for*)
 
 
-(* ::Input:: *)
-(*SubF={at->( F[1][#1,#2]&),Qtt->F[2],M->F[3],Q->F[4],Qzz->F[5],Qxz->F[6]};*)
+(* ::Input::Initialization:: *)
+SubF={at->( F[1][#1,#2]&),Qtt->F[2],M->F[3],Q->F[4],Qzz->F[5],Qxz->F[6]};
 
 
 (* ::Subsection:: *)
@@ -335,9 +339,9 @@
 (*c.f. Donos 1512.06861 (5.2)*)
 
 
-(* ::Input:: *)
-(*SubFxz=F[i_]:>Fxz[[i]];*)
-(*SubPotentials=MapThread[(#1->#2&),{{f,g0},{((1-#)^2 (1+(1-(1-#)^2)+(1-(1-#)^2)^2- (\[Mu]1^2 (1-(1-#)^2)^3)/4)&),(1-(1-#)^2&)}}];*)
+(* ::Input::Initialization:: *)
+SubFxz=F[i_]:>Fxz[[i]];
+SubPotentials=MapThread[(#1->#2&),{{f,g0},{((1-#)^2 (1+(1-(1-#)^2)+(1-(1-#)^2)^2- (\[Mu]1^2 (1-(1-#)^2)^3)/4)&),(1-(1-#)^2&)}}];
 
 
 (* ::Subsection:: *)
@@ -363,6 +367,14 @@
 
 (* ::Input:: *)
 (*DumpSave["IntermediateData/dEOMsI.m",dEOMsI];*)
+
+
+SetDirectory[NotebookDirectory[]]
+EOMsI=<<"IntermediateData/EOMsI.dat";
+<<"IntermediateData/dEOMsI.m";
+
+
+dEOMsI//Variables;
 
 
 (* ::Subsection:: *)
@@ -433,26 +445,13 @@ SubF
 (*Derivative[2, 0][Fxz[[i_]]][__] :> gD2xFI[[i]],*)
 (*Derivative[0, 2][Fxz[[i_]]][__] :> gD2zFI[[i]],*)
 (*Derivative[1, 1][Fxz[[i_]]][__] :> gDxDzFI[[i]]};*)
-(*SubFB={z -> gzB, x -> gxB,*)
-(*Fxz[[i_]][__] :> gFB[[i]],*)
-(*Derivative[1, 0][Fxz[[i_]]][__] :> gDxFB[[i]],*)
-(*Derivative[0, 1][Fxz[[i_]]][__] :> gDzFB[[i]], *)
-(*Derivative[2, 0][Fxz[[i_]]][__] :> gD2xFB[[i]],*)
-(*Derivative[0, 2][Fxz[[i_]]][__] :> gD2zFB[[i]],*)
-(*Derivative[1, 1][Fxz[[i_]]][__] :> gDxDzFB[[i]]};*)
-(*SubFT={z -> gzT, x -> gxT,*)
-(*Fxz[[i_]][__] :> gFT[[i]],*)
-(*Derivative[1, 0][Fxz[[i_]]][__] :> gDxFT[[i]],*)
-(*Derivative[0, 1][Fxz[[i_]]][__] :> gDzFT[[i]], *)
-(*Derivative[2, 0][Fxz[[i_]]][__] :> gD2xFT[[i]],*)
-(*Derivative[0, 2][Fxz[[i_]]][__] :> gD2zFT[[i]],*)
-(*Derivative[1, 1][Fxz[[i_]]][__] :> gDxDzFT[[i]]};*)
+(**)
 
 
 (* ::Input:: *)
 (*dEOMsI;*)
 (*Map[Coefficient[#,Flatten[Array[Derivative[orderDiv[[#1,1]],orderDiv[[#1,2]]][dFxz[[#2]]][x,z]&,{ndiv,ne}]]]&,%];*)
-(*CoefEOMsI=zeroI+Simplify[%,TimeConstraint->10] /. SubFI/.SubPotentials;*)
+(*CoefEOMsI=zeroI + Simplify[%,TimeConstraint->10] /. SubFI/.SubPotentials;*)
 
 
 (* ::Input:: *)
@@ -463,24 +462,24 @@ SubF
 (* ::Input:: *)
 (*dEOMsT;*)
 (*Map[Coefficient[#,Flatten[Array[Derivative[orderDiv[[#1,1]],orderDiv[[#1,2]]][dFxz[[#2]]][x,z]&,{ndiv,ne}]]]&,%];*)
-(*CoefEOMsT=zeroT+Simplify[%,TimeConstraint->10] /. SubFT/.SubPotentials;*)
+(*CoefEOMsT=zeroT+Simplify[%,TimeConstraint->10] /. SubFI/.SubPotentials;*)
 
 
 (* ::Input:: *)
-(*EOMsT/. SubFT/.SubPotentials;*)
+(*EOMsT/. SubFI/.SubPotentials;*)
 (*gEOMsT=%;*)
 
 
 (* ::Input:: *)
 (*dEOMsB;*)
 (*Map[Coefficient[#,Flatten[Array[Derivative[orderDiv[[#1,1]],orderDiv[[#1,2]]][dFxz[[#2]]][x,z]&,{ndiv,ne}]]]&,%];*)
-(*CoefEOMsB=zeroB+Simplify[%,TimeConstraint->10] /. SubFB/.SubPotentials;*)
-(*EOMsB/.SubFB/.SubPotentials;*)
+(*CoefEOMsB=zeroB+Simplify[%,TimeConstraint->10] /. SubFI/.SubPotentials;*)
+(*EOMsB/.SubFI/.SubPotentials;*)
 (*gEOMsB=%;*)
 
 
 (* ::Input:: *)
-(*Variables[gEOMsI]*)
+(*Variables[gEOMsB];*)
 
 
 (* ::Input:: *)

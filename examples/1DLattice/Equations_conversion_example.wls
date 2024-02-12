@@ -23,12 +23,6 @@ Off[Part::pkspec1]
 Off[Part::partd]
 
 
-orderDiv
-
-
-ne
-
-
 (* ::Input::Initialization:: *)
 orderDiv={{0,0},{1,0},{0,1},{2,0},{0,2},{1,1}};
 ne=6;
@@ -44,16 +38,19 @@ ne=6;
 
 (* ::Input:: *)
 (*Do[Module[{pyExpr},*)
-(*pyExpr=Pythonify/@Flatten[names[[1]]];*)
+(*pyExpr=(Pythonify/@Flatten[names[[1]]])/.{"gzi"->"z","gxi"->"z","gfb"->"f","gfi"->"f","gft"->"f"};*)
 (*Export[names[[2]],StringRiffle[pyExpr,{"","\n"~~"",""}],"Text"]*)
 (*],*)
-(*{names,{{CoefEOMsB,"CoefsB_py.txt"},{CoefEOMsT,"CoefsT_py.txt"},{CoefEOMsI,"CoefsI_py.txt"}}}]*)
+(*{names,({{CoefEOMsB,"Coefs_1_0.txt"},{CoefEOMsT,"Coefs_1_1.txt"},{CoefEOMsI,"Coefs_I.txt"}})/.{gzi->z,gxi->z}}]*)
 (*Do[Module[{pyExpr},*)
-(*pyExpr=Pythonify/@Flatten[names[[1]]];*)
+(*pyExpr=(Pythonify/@Flatten[names[[1]]])/.{gzi->z,gxi->z,gfb->f,gfi->f,gft->f};*)
 (*Export[names[[2]],StringRiffle[pyExpr,{"","\n"~~"",""}],"Text"]*)
 (*],*)
-(*{names,{{gEOMsB,"EOMsB_py.txt"},{gEOMsT,"EOMsT_py.txt"},{gEOMsI,"EOMsI_py.txt"}}}]*)
+(*{names,({{gEOMsB,"EOMs_1_0.txt"},{gEOMsT,"EOMs_1_1.txt"},{gEOMsI,"EOMs_I.txt"}})}]*)
 
 
 (* ::Input:: *)
 (*Directory[]*)
+
+
+gEOMsI//Variables
